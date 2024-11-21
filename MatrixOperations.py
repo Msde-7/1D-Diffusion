@@ -92,8 +92,8 @@ c: Superdiagonal
 """
 def solve_matrix_thomas(a, b, c, d):    
     n = len(d)
-    
     # Forward elimination
+
     for i in range(1, n):
         if abs(b[i - 1]) < 1e-12:
             raise ValueError("Numerical instability: Main diagonal element is too small.")
