@@ -120,12 +120,12 @@ def test_sin_neumann():
     start_time = 0
     end_time = 10.0
     dx = .001
-    dt = .1
+    dt = .01
     
     num_x = round((end_space - start_space) / dx)
     num_t = round((end_time - start_time) / dt)
 
-    X, rho = solve_rho_eq(start_space = start_space, end_space = end_space, start_time = start_time, end_time = end_time, dx = dx, dt = dt, lambda_func=lambda x: 0, D_func=lambda x: .5, rho_func=lambda X: np.sin(np.pi * X) + 1)
+    X, rho = solve_rho_eq(start_space = start_space, end_space = end_space, start_time = start_time, end_time = end_time, dx = dx, dt = dt, lambda_func=lambda x: 0, D_func=lambda x: 0.01, rho_func=lambda X: np.sin(np.pi * X) + 1)
     
     for i in range(0, num_t, int(num_t // (end_time - start_time))):
         plt.plot(X, rho[i, :], label=f"t={i * (end_time - start_time) / num_t:.3f}")
