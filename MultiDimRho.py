@@ -59,7 +59,6 @@ def solve_rho_eq_2d(start_space_x=0, end_space_x=10.0,
             d[-1] = rho[n, num_x-1, j] * (1 - dt * lambda_func(X[num_x-1], Y[j], T[n]))
             
             rho_temp[:, j] = mat.solve_matrix_thomas(a, b, c, d)
-        
         # y-sweep: For each fixed x in y
         rho_new = np.zeros((num_x, num_y), dtype="float64")
         for i in range(num_x):
@@ -92,7 +91,7 @@ def solve_rho_eq_2d(start_space_x=0, end_space_x=10.0,
             rho_new[i, :] = mat.solve_matrix_thomas(a, b, c, d)
         
         # Update the solution for the next time step
-        rho[n+1, :, :] = rho_new
+        rho[n+1, :, :] = rho_new.copy()
     
     return X, Y, rho
 
@@ -105,20 +104,10 @@ def test_diffusion_2d():
     end_time = 30.0
 
     #orig .1 all
-    dx = 0.0001
-    dy = 0.0001
-    dt = 0.000001  
+    dx = 0.1
+    dy = 0.1
+    dt = 0.1  
     
-    """
-    X, Y, rho = solve_rho_eq_2d(start_space_x, end_space_x,
-                                  start_space_y, end_space_y,
-                                  start_time, end_time,
-                                  dx, dy, dt,
-                                  lambda_func=lambda x, y, t: .6 if (x>=8 and x<=9 and y <= 7 and y >= 6) else 0,
-                                  D_func=lambda x, y, t: 0 if ((6<=x<=7 and y >=1) or (y<=9 and 4<=x<=5)) else 1,
-                                  rho_func=lambda X, Y: np.where((X >= 8) & (X <= 9), 100, 0)
-    )
-    """
     
     X, Y, rho = solve_rho_eq_2d(start_space_x, end_space_x,
                                   start_space_y, end_space_y,
@@ -126,11 +115,19 @@ def test_diffusion_2d():
                                   dx, dy, dt,
                                   lambda_func=lambda x, y, t: 0,
                                   D_func=lambda x, y, t: .2,
-                                  rho_func=lambda X, Y: np.sin(np.pi * X) * np.sin(np.pi * Y) + 1
+                                  rho_func=lambda X, Y: np.sin(np.pi * X) * np.sin(np.pi * Y) + 10
     )
+    """    
+    X, Y, rho = solve_rho_eq_2d(start_space_x, end_space_x,
+                                  start_space_y, end_space_y,
+                                  start_time, end_time,
+                                  dx, dy, dt,
+                                  lambda_func=lambda x, y,t : 0,#.6 if (x>=8 and x<=9 and y <= 7 and y >= 6) else 0,
+                                  D_func=lambda x, y, t: 0 if ((6<=x<=7 and y >=1) or (y<=9 and 4<=x<=5)) else 1,
+                                  rho_func=lambda X, Y: np.where((X >= 8) & (X <= 9), 100, 0))
 
     #good rho func np.sin(np.pi * X) * np.sin(np.pi * Y) + 1
-    
+    """
     X_grid, Y_grid = np.meshgrid(X, Y, indexing='ij')
     
     num_t = rho.shape[0]
@@ -159,9 +156,9 @@ def test_diffusion_2d_fullplots():
     start_time = 0
     end_time = 80.0
 
-    dx = 0.001
-    dy = 0.001
-    dt = 0.0001
+    dx = 0.1
+    dy = 0.1
+    dt = 0.1
 
     X, Y, rho = solve_rho_eq_2d(start_space_x, end_space_x,
                                   start_space_y, end_space_y,
@@ -191,6 +188,39 @@ def test_diffusion_2d_fullplots():
 
 def main():
     test_diffusion_2d()
+
+def time_test():
+    start_space_x = 0
+    end_space_x = 10.0
+    start_space_y = 0
+    end_space_y = 11.0
+    start_time = 0
+    end_time = 10.0
+
+    #orig .1 all
+    dx = 0.1
+    dy = 0.1
+    dt = 0.05
+    
+    """
+    X, Y, rho = solve_rho_eq_2d(start_space_x, end_space_x,
+                                  start_space_y, end_space_y,
+                                  start_time, end_time,
+                                  dx, dy, dt,
+                                  lambda_func=lambda x, y, t: .6 if (x>=8 and x<=9 and y <= 7 and y >= 6) else 0,
+                                  D_func=lambda x, y, t: 0 if ((6<=x<=7 and y >=1) or (y<=9 and 4<=x<=5)) else 1,
+                                  rho_func=lambda X, Y: np.where((X >= 8) & (X <= 9), 100, 0)
+    )
+    """
+    
+    X, Y, rho = solve_rho_eq_2d(start_space_x, end_space_x,
+                                  start_space_y, end_space_y,
+                                  start_time, end_time,
+                                  dx, dy, dt,
+                                  lambda_func=lambda x, y, t: .0001,
+                                  D_func=lambda x, y, t: .01,
+                                  rho_func=lambda X, Y: np.sin(np.pi * X) * np.sin(np.pi * Y) + 1
+    )
 
 if __name__ == "__main__":
     main()

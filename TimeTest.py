@@ -29,4 +29,4 @@ end_cached = perf_counter()
 time_original = end_original - start_original
 time_cached = end_cached - start_cached
 
-print(f"Uncached time: {time_original}\nCached time: {time_cached}");
+print(f"Uncached time: {time_original}\nCached time: {time_cached}")
